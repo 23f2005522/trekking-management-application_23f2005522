@@ -4,7 +4,7 @@ from config.config import Config
 from model.model import *  # importing models before they are creating database tables inside the app context 
 
 
-#  Routes 
+#  Routes (Blueprints)
 from routes.home_route import home_bp
 
 
@@ -28,7 +28,7 @@ app.config.from_object(Config)
 
 
 
-#registering the All routes to the APP here
+#registering the All routes(Blueprints) to the APP here
 app.register_blueprint(home_bp)
 
 
