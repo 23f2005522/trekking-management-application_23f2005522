@@ -28,3 +28,8 @@ Thumbs.db
 .idea/
 *.sublime-project
 *.sublime-workspace
+
+
+# database files
+*.sqlite3
+.db
