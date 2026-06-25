@@ -87,23 +87,22 @@ class UserModel(BaseModel):  ## trekkers [by default] , staff [call StaffModel] 
 
     bookings = db.relationship(
         "BookingModel",  ## here we specify the python model name not the table name
-        back_populates="user",
+        backref=db.backref("user", lazy=True), # gives booking132.user to access the user who made the booking
         foreign_keys="BookingModel.user_id",  # which foreign key should be used
         lazy=True,
         cascade="all, delete-orphan",  # if a user is deleted, all their bookings will be deleted as well
     )
 
-    
     staff = db.relationship(
         "StaffModel",
-        back_populates="user",
+        backref=db.backref("user", uselist=False),
         uselist=False,
         cascade="all, delete-orphan",
     )
 
     reviews = db.relationship(
         "TrekReviewModel",
-        back_populates="user",
+        backref=db.backref("user", lazy=True),
         foreign_keys="TrekReviewModel.user_id",
         lazy=True,
         cascade="all, delete-orphan",
@@ -136,8 +135,7 @@ class StaffModel(BaseModel):
         db.Integer, db.ForeignKey("users.id"), nullable=False, unique=True
     )
     
-    user = db.relationship("UserModel", back_populates="staff", uselist=False)
-
+    # user relationship is now automatically handled by UserModel's staff backref
 
     joining_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     experience = db.Column(db.Integer, nullable=False, default=0)  # in years
@@ -147,14 +145,14 @@ class StaffModel(BaseModel):
     )
     status = db.Column(db.Enum(StaffStatus), default=StaffStatus.ACTIVE, nullable=False)
     bio = db.Column(db.String(500), nullable=True, default="Add your bio now")
+    Profile_verification_status = db.Column(db.Boolean, default=False, nullable=False)
 
     treks = db.relationship(
         "TrekModel",
-        back_populates="staff",
+        backref=db.backref("staff", lazy=True),
         foreign_keys="TrekModel.assigned_staff_id",
         lazy=True,
     )  # one to many relationship with TrekModel
-
 
 
 # Trek Model
@@ -177,12 +175,14 @@ class TrekModel(BaseModel):
 
     # relationship with user model (staff) [one] to [many] Trek Model
     assigned_staff_id = db.Column(db.Integer, db.ForeignKey("staffs.id"), nullable=True)
-    staff = db.relationship("StaffModel", back_populates="treks", lazy=True)
+    
+    # staff relationship is now automatically handled by StaffModel's treks backref
+    
     bookings = db.relationship(
-        "BookingModel", back_populates="trek", lazy=True, cascade="all, delete-orphan"
+        "BookingModel", backref=db.backref("trek", lazy=True), lazy=True, cascade="all, delete-orphan"
     )  # one to many relationship with BookingModel
     reviews = db.relationship(
-        "TrekReviewModel", back_populates="trek", lazy=True, cascade="all, delete-orphan"
+        "TrekReviewModel", backref=db.backref("trek", lazy=True), lazy=True, cascade="all, delete-orphan"
     )  # one to many relationship with ReviewModel
 
     __table_args__ = (
@@ -220,9 +220,7 @@ class BookingModel(BaseModel):
     booking_cancel_date = db.Column(db.DateTime, nullable=True)
     booking_cancel_reason = db.Column(db.String(500), nullable=True)
 
-    # relationships
-    user = db.relationship("UserModel", back_populates="bookings", lazy=True)
-    trek = db.relationship("TrekModel", back_populates="bookings", lazy=True)
+    # relationships (automatically generated via backrefs on UserModel and TrekModel)
 
     # constraints to ensure data integrity
     __table_args__ = (
@@ -242,10 +240,4 @@ class TrekReviewModel(BaseModel):
     rating = db.Column(db.Integer, nullable=False, default=5)
     comment = db.Column(db.String(500), nullable=True)
 
-    # relationships
-
-    # user (one) to (many) trek reviews
-    user = db.relationship("UserModel", back_populates="reviews", lazy=True)
-
-    # trek (one) to (many) trek reviews
-    trek = db.relationship("TrekModel", back_populates="reviews", lazy=True)
+    # relationships (automatically generated via backrefs on UserModel and TrekModel)
