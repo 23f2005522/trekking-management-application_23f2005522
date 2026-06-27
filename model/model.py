@@ -46,9 +46,11 @@ class PaymentStatus(str, Enum):
 
 # StaffStatus
 class StaffStatus(str, Enum):
-    ACTIVE = "active"
-    INACTIVE = "inactive"
+    APPROVED = "approved"
+    PENDING = "pending"
+    REJECTED = "rejected"
     BLACKLISTED = "blacklisted"
+    
 
 
 # Mixins {using Multiple Inheritance to create common fields for all models}
@@ -143,9 +145,9 @@ class StaffModel(BaseModel):
     contact_number = db.Column(
         db.String(15), nullable=True, default="Add your contact number now"
     )
-    status = db.Column(db.Enum(StaffStatus), default=StaffStatus.ACTIVE, nullable=False)
-    bio = db.Column(db.String(500), nullable=True, default="Add your bio now")
-    Profile_verification_status = db.Column(db.Boolean, default=False, nullable=False)
+    staff_bio = db.Column(db.String(500), nullable=True, default="Add your bio now")
+    Profile_status = db.Column(db.Enum(StaffStatus), default=StaffStatus.PENDING, nullable=False)
+    
 
     treks = db.relationship(
         "TrekModel",
