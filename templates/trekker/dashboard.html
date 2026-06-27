@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}
+Trekker Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="row">
+
+        <!-- Sidebar -->
+
+        <div class="col-1 p-0">
+
+            {% include "trekker/sidebar.html" %}
+
+        </div>
+
+        <!-- Main -->
+
+        <div class="col-11">
+
+            <div class="py-4">
+
+                <h2 class="fw-bold">
+
+                    Welcome, Amit!
+
+                </h2>
+
+                <p class="text-muted">
+
+                    Browse available treks and manage your bookings.
+
+                </p>
+
+                <!-- Filters -->
+
+                <div class="row g-3 mb-4">
+
+                    <div class="col-md-3">
+
+                        <select class="form-select">
+
+                            <option>Difficulty: All</option>
+                            <option>Easy</option>
+                            <option>Moderate</option>
+                            <option>Hard</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <select class="form-select">
+
+                            <option>Location: All</option>
+                            <option>Himachal</option>
+                            <option>Uttarakhand</option>
+                            <option>Nepal</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <!-- Available Treks -->
+
+                <div class="card shadow-sm">
+
+                    <div class="card-header bg-white">
+
+                        <h5 class="mb-0">
+
+                            Available Treks
+
+                        </h5>
+
+                    </div>
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover align-middle mb-0">
+
+                            <thead class="table-light">
+
+                                <tr>
+
+                                    <th>Trek</th>
+                                    <th>Location</th>
+                                    <th>Difficulty</th>
+                                    <th>Duration</th>
+                                    <th>Slots</th>
+                                    <th>Action</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+
+                                    <td>Everest Base Camp</td>
+
+                                    <td>Nepal</td>
+
+                                    <td>Hard</td>
+
+                                    <td>12 Days</td>
+
+                                    <td>10</td>
+
+                                    <td>
+
+                                        <a href="#"
+                                           class="btn btn-success btn-sm">
+
+                                            Book Now
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                                <tr>
+
+                                    <td>Roopkund Trek</td>
+
+                                    <td>Uttarakhand</td>
+
+                                    <td>Moderate</td>
+
+                                    <td>7 Days</td>
+
+                                    <td>7</td>
+
+                                    <td>
+
+                                        <a href="#"
+                                           class="btn btn-success btn-sm">
+
+                                            Book Now
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                                <tr>
+
+                                    <td>Hampta Pass</td>
+
+                                    <td>Himachal</td>
+
+                                    <td>Moderate</td>
+
+                                    <td>5 Days</td>
+
+                                    <td>8</td>
+
+                                    <td>
+
+                                        <a href="#"
+                                           class="btn btn-success btn-sm">
+
+                                            Book Now
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <!-- My Bookings -->
+
+                <div class="card shadow-sm mt-5">
+
+                    <div class="card-header bg-white">
+
+                        <h5 class="mb-0">
+
+                            My Bookings
+
+                        </h5>
+
+                    </div>
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover align-middle mb-0">
+
+                            <thead class="table-light">
+
+                                <tr>
+
+                                    <th>Trek</th>
+                                    <th>Booking Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+
+                                    <td>Kedarkantha Trek</td>
+
+                                    <td>10 May 2026</td>
+
+                                    <td>
+
+                                        <span class="badge bg-success">
+
+                                            Booked
+
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+
+                                        <a href="#"
+                                           class="btn btn-outline-success btn-sm">
+
+                                            View Details
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

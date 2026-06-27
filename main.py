@@ -6,7 +6,10 @@ from db.seed_data import master_seed
 
 #  Routes (Blueprints)
 from routes.home_route import home_bp
-
+from routes.auth_routes import auth_bp
+from routes.admin_routes import admin_bp
+from routes.trekker_routes import trekker_bp
+from routes.trek_staff_routes import trek_staff_bp
 
 
 
@@ -33,7 +36,10 @@ with app.app_context() :
 
 #registering the All routes(Blueprints) to the APP here
 app.register_blueprint(home_bp)
-
+app.register_blueprint(auth_bp)
+app.register_blueprint(admin_bp)
+app.register_blueprint(trekker_bp)
+app.register_blueprint(trek_staff_bp)
 
     
     
