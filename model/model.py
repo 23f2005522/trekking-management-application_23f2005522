@@ -95,7 +95,7 @@ class UserModel(BaseModel):  ## trekkers [by default] , staff [call StaffModel] 
         cascade="all, delete-orphan",  # if a user is deleted, all their bookings will be deleted as well
     )
 
-    staff = db.relationship(
+    staff_profile = db.relationship(
         "StaffModel",
         backref=db.backref("user", uselist=False),
         uselist=False,

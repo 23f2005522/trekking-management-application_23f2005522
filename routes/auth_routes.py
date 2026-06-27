@@ -18,36 +18,61 @@ def login():
                 "name": "role",
                 "type": "radio",
                 "options": [
-                    {"value": UserRole.TREKKER, "label": "Trekker"},
-                    {"value": UserRole.STAFF, "label": "Trek Staff"},
-                    {"value": UserRole.ADMIN, "label": "Admin"},
+                    {"value": UserRole.TREKKER.value.lower(), "label": "Trekker"},
+                    {"value": UserRole.STAFF.value.lower(), "label": "Trek Staff"},
+                    {"value": UserRole.ADMIN.value.lower(), "label": "Admin"},
                 ],
             },
         ]
 
         return render_template("login.html", form_fields=form_fields)
+    
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
+        role = request.form.get("role")
+        
+        
+        if not email or not password or not role:
 
-        if not email or not password:
-
-            flash("Please provide both email and password.", "danger")
+            flash("Please provide all required fields.", "danger")
             return redirect("/auth/login")
 
         user = UserModel.query.filter(UserModel.email == email).first()
 
+
         if not user:
             flash("User not found. Please register first.", "danger")
             return redirect("/auth/register")
+        
+        # check if the role matches
+        if user.role.value.lower() != role.lower():
+            flash("Incorrect role selected for this user.", "danger")
+            return redirect("/auth/login")
 
         if user.check_password(password):
             session["user_id"] = user.id
             session["user_role"] = user.role  # Store the user's role in the session
             flash("Login successful!", "success")
 
-        return redirect
+        # redirect to role-based dashboard
+        if user.role == UserRole.TREKKER:
+            return redirect("/trekker/dashboard")
+        elif user.role == UserRole.STAFF:
+            return redirect("/trekstaff/dashboard")
+        elif user.role == UserRole.ADMIN:
+            return redirect("/admin/dashboard")
+        
+        else : 
+            flash("Invalid user role.", "danger")
+            return redirect("/auth/login")
 
+
+@auth_bp.route("/logout" , methods=["GET"])
+def logout():
+    session.clear()
+    flash("You have been logged out.", "info")
+    return redirect("/auth/login")
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():

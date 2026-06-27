@@ -39,7 +39,7 @@ Admin Dashboard
 
                 </p>
 
-                <!-- Cards -->
+                <!-- Stats Cards -->
 
                 <div class="row g-4 mt-2">
 
@@ -63,7 +63,7 @@ Admin Dashboard
 
                                         <h1 class="text-success fw-bold">
 
-                                            25
+                                           {{ total_treks }}
 
                                         </h1>
 
@@ -107,7 +107,7 @@ Admin Dashboard
 
                                         <h1 class="text-success fw-bold">
 
-                                            120
+                                            {{ total_trekkers }}
 
                                         </h1>
 
@@ -147,7 +147,7 @@ Admin Dashboard
 
                                         <h1 class="text-success fw-bold">
 
-                                            18
+                                            {{ total_staff }}
 
                                         </h1>
 
@@ -187,7 +187,7 @@ Admin Dashboard
 
                                         <h1 class="text-success fw-bold">
 
-                                            185
+                                            {{ total_bookings }}
 
                                         </h1>
 
@@ -211,7 +211,7 @@ Admin Dashboard
 
                 </div>
 
-                <!-- Recent Bookings -->
+                <!-- Booking Stats -->
 
                 <div class="card shadow-sm mt-5">
 
@@ -249,115 +249,61 @@ Admin Dashboard
 
                             <tbody>
 
+                                {% for booking in fresh_bookings %}
+
                                 <tr>
 
-                                    <td>B001</td>
+                                    <td>{{ booking.id }}</td>
 
-                                    <td>Amit Sharma</td>
+                                    <td>{{ booking.user.username }}</td>
 
-                                    <td>Everest Base Camp</td>
+                                    <td>{{ booking.trek.name }}</td>
 
-                                    <td>12 May 2026</td>
+                                    <td>{{ booking.booking_date.strftime('%d %b %Y') }}</td>
 
                                     <td>
 
-                                        <span class="badge bg-success">
+                                        {% if booking.status.value == 'booked' %}
 
-                                            Booked
+                                        <span class="badge bg-warning text-dark">
+
+                                            {{ booking.status.value }}
 
                                         </span>
 
-                                    </td>
-
-                                </tr>
-
-                                <tr>
-
-                                    <td>B002</td>
-
-                                    <td>Priya Patel</td>
-
-                                    <td>Roopkund Trek</td>
-
-                                    <td>11 May 2026</td>
-
-                                    <td>
-
-                                        <span class="badge bg-success">
-
-                                            Booked
-
-                                        </span>
-
-                                    </td>
-
-                                </tr>
-
-                                <tr>
-
-                                    <td>B003</td>
-
-                                    <td>Rahul Verma</td>
-
-                                    <td>Kedarkantha Trek</td>
-
-                                    <td>10 May 2026</td>
-
-                                    <td>
+                                        {% elif booking.status.value == 'cancelled' %}
 
                                         <span class="badge bg-danger">
 
-                                            Cancelled
+                                            {{ booking.status.value }}
 
                                         </span>
 
-                                    </td>
-
-                                </tr>
-
-                                <tr>
-
-                                    <td>B004</td>
-
-                                    <td>Sneha Iyer</td>
-
-                                    <td>Valley of Flowers</td>
-
-                                    <td>09 May 2026</td>
-
-                                    <td>
+                                        {% elif booking.status.value == 'completed' %}
 
                                         <span class="badge bg-success">
 
-                                            Booked
+                                            {{ booking.status.value }}
 
                                         </span>
+
+                                        {% else %}
+
+                                        <span class="badge bg-secondary">
+
+                                            {{ booking.status.value }}
+
+                                        </span>
+
+                                        {% endif %}
 
                                     </td>
 
                                 </tr>
 
-                                <tr>
 
-                                    <td>B005</td>
 
-                                    <td>Vikram Singh</td>
-
-                                    <td>Hampta Pass</td>
-
-                                    <td>08 May 2026</td>
-
-                                    <td>
-
-                                        <span class="badge bg-success">
-
-                                            Booked
-
-                                        </span>
-
-                                    </td>
-
-                                </tr>
+                                {% endfor %}
 
                             </tbody>
 

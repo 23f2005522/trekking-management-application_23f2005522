@@ -97,6 +97,47 @@ def seed_trek():
         db.session.rollback()
         return None
 
+def seed_dummy_trek_staff() : 
+    try : 
+        staff = UserModel.query.filter_by(email="dummy_staff@tma.com").first()
+        
+        if staff:
+            print("Dummy trek staff ✔️  already exists")
+            return
+        
+        # create dummy trek user with role as STAFF and then add the user id in to the StaffModel table
+       
+        new_dummy_staff = UserModel(
+            username = "DUMMY_TREK_STAFF" , 
+            email ="dummy_staff@tma.com",
+            phone = "3003003003",
+            role = UserRole.STAFF,
+            
+        )
+        new_dummy_staff.set_password("staff")
+        db.session.add(new_dummy_staff)
+        db.session.commit()
+        
+        # add the userid in to the StaffModel table
+        new_staff = StaffModel(
+            user_id = new_dummy_staff.id,
+            joining_date = datetime.now(timezone.utc),
+            experience = 2, # in years
+            address = "123 Dummy Street, Dummy City, Dummy Country",
+            contact_number = "3003003003",
+            staff_bio = "I am a dummy trek staff for testing purposes. I have 2 years of experience in guiding treks and ensuring the safety of trekkers. I am passionate about trekking and love to share my knowledge and experience with others.",
+            Profile_status = StaffStatus.PENDING
+        )
+        db.session.add(new_staff)
+        db.session.commit()
+        
+        print("Dummy trek staff created successfully")
+        
+        return new_dummy_staff
+    except Exception as e:
+        print("Error occurred while seeding dummy trek staff:", str(e))
+        db.session.rollback()
+        return None
 
 def seed_dummy_booking():
 
@@ -144,6 +185,7 @@ def seed_dummy_booking():
 def master_seed():
     seed_Admin()
     seed_trekker()
+    seed_dummy_trek_staff()
     seed_trek()
     seed_dummy_booking()
     print("Seeding completed successfully")

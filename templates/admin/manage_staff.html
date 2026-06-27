@@ -1,0 +1,226 @@
+{% extends "base.html" %} {% block title %} Admin Dashboard {% endblock %} {%
+block content %}
+
+<div class="container">
+  <div class="row flex justify-content-between">
+    <!-- Sidebar -->
+
+    <div class="col-1 p-0">{% include "admin/sidebar.html" %}</div>
+
+    <!-- Main -->
+
+    <div class="col-11">
+      <div class="py-4">
+        <!-- heading -->
+
+        <h1 class="fw-bold">Manage Staff</h1>
+
+        <p class="text-muted">
+          Review staff registration requests and manage staff accounts.
+        </p>
+
+        <!-- Tabs -->
+
+        <ul class="nav nav-tabs mt-4" id="staffTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link active"
+              id="pending-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#pending"
+              type="button"
+            >
+              Pending ({{ pending_staff_members|length }})
+            </button>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="approved-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#approved"
+              type="button"
+            >
+              Approved ({{ approved_staff_members|length }})
+            </button>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="blacklisted-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#blacklisted"
+              type="button"
+            >
+              Blacklisted ({{ blacklisted_staff_members|length }})
+            </button>
+          </li>
+        </ul>
+
+        <!-- Tab Content -->
+
+        <div class="tab-content mt-4">
+          <!-- Pending -->
+
+          <div class="tab-pane fade show active" id="pending">
+            <div class="card shadow-sm">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Contact</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {% if pending_staff_members|length == 0 %}
+                    <tr>
+                      <td colspan="5" class="text-center">
+                        No new staff members's approval pending .
+                      </td>
+                    </tr>
+                    {% endif %} {% for staff in pending_staff_members %}
+                    <tr>
+                      <td>{{ staff.id }}</td>
+                      <td>{{ staff.username }}</td>
+                      <td>{{ staff.email }}</td>
+                      <td>{{ staff.staff_profile.contact_number }}</td>
+
+                      <td>
+                        <!-- status -->
+                        <span class="badge bg-warning text-dark">
+                          Pending
+                        </span>
+                      </td>
+
+                      <td>
+                        <!--  Action Buttons -->
+                        <div class="d-flex gap-2">
+                          <form
+                            action="/admin/manage_staff/approve_staff/{{ staff.id }}"
+                            method="POST"
+                            class="d-inline"
+                          >
+                            <button
+                              type="submit"
+                              class="btn btn-success btn-sm"
+                            >
+                              Approve
+                            </button>
+                          </form>
+
+                          <form
+                            action="/admin/manage_staff/reject_staff/{{ staff.id }}"
+                            method="POST"
+                          >
+                            <button type="submit" class="btn btn-danger btn-sm">
+                              Reject
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+
+                    </tr>
+
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Approved -->
+
+          <div class="tab-pane fade" id="approved">
+            <div class="card shadow-sm">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Contact</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {% if approved_staff_members|length == 0 %}
+                    <tr>
+                      <td colspan="5" class="text-center">
+                        No approved staff members found.
+                      </td>
+                    </tr>
+                    {% endif %} {% for staff in approved_staff_members %}
+                    <tr>
+                      <td>{{ staff.id }}</td>
+                      <td>{{ staff.username }}</td>
+                      <td>{{ staff.email }}</td>
+                      <td>{{ staff.staff_profile.contact_number }}</td>
+
+                      <td>
+                        <span class="badge bg-success"> Approved </span>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blacklisted -->
+
+          <div class="tab-pane fade" id="blacklisted">
+            <div class="card shadow-sm">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Reason</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {% if blacklisted_staff_members|length == 0 %}
+                    <tr>
+                      <td colspan="5" class="text-center">
+                        No blacklisted staff members found.
+                      </td>
+                    </tr>
+                    {% endif %} {% for staff in blacklisted_staff_members %}
+                    <tr>
+                      <td>{{ staff.id }}</td>
+                      <td>{{ staff.username }}</td>
+                      <td>{{ staff.email }}</td>
+                      <td>{{ staff.staff_profile.blacklisted_reason }}</td>
+
+                      <td>
+                        <span class="badge bg-danger"> Blacklisted </span>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
