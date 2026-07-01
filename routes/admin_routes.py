@@ -27,7 +27,8 @@ def dashboard():
     
     
     
-    
+# Mange Staff Routes 
+   
 @admin_bp.route("/manage_staff" , methods=["GET"])
 @is_logged_in
 @role_required(UserRole.ADMIN)
@@ -47,10 +48,6 @@ def manage_staff():
         blacklisted_staff_members = [staff for staff in staff_members if staff.staff_profile.Profile_status == StaffStatus.BLACKLISTED]
         
         return render_template("admin/manage_staff.html", staff_members=staff_members, pending_staff_members=pending_staff_members, approved_staff_members=approved_staff_members, blacklisted_staff_members=blacklisted_staff_members)
-
-    
-    
-
 
 @admin_bp.route("/manage_staff/approve_staff/<int:user_id>" , methods=["POST", "PATCH"])
 @is_logged_in
