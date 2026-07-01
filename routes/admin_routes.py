@@ -17,9 +17,7 @@ def dashboard():
         total_staff = UserModel.query.filter_by(role=UserRole.STAFF).count()
         total_bookings = BookingModel.query.count()
         total_treks  = TrekModel.query.count()
-        
-        print("Total Trekkers:", total_trekkers)
-        
+                
         # some recent bookings for the dashboard
         fresh_bookings = BookingModel.query.order_by(BookingModel.booking_date.desc()).limit(6).all()
         
