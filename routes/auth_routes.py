@@ -72,7 +72,7 @@ def login():
 def logout():
     session.clear()
     flash("You have been logged out.", "info")
-    return redirect("/auth/login")
+    return redirect("/")
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
