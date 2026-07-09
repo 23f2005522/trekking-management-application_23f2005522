@@ -15,6 +15,7 @@ def dashboard():
 
 # Manage staff route
 
+
 # show all staff route
 @admin_bp.route("/manage_staff", methods=["GET"])
 @is_logged_in
