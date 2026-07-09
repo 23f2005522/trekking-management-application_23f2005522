@@ -25,7 +25,7 @@ Staff Dashboard
                 </h1>
 
                 <p class="text-muted">
-                    Welcome back! Here's an overview of your assigned treks.
+                    Welcome back{% if user %}, {{ user.username }}{% endif %}! Here's an overview of your assigned treks.
                 </p>
 
                 <!-- Statistics -->
@@ -43,7 +43,7 @@ Staff Dashboard
                                         </h6>
 
                                         <h1 class="fw-bold text-success">
-                                            3
+                                            {{ total_assigned_treks }}
                                         </h1>
 
                                         <small class="text-success">
@@ -70,7 +70,7 @@ Staff Dashboard
                                         </h6>
 
                                         <h1 class="fw-bold text-success">
-                                            32
+                                            {{ total_participants }}
                                         </h1>
 
                                         <small class="text-success">
@@ -85,7 +85,7 @@ Staff Dashboard
                         </div>
                     </div>
 
-                    <!-- Open Treks -->
+                    <!-- Open for Booking -->
                     <div class="col-md-6 col-lg-4">
                         <div class="card shadow-sm">
                             <div class="card-body">
@@ -93,19 +93,46 @@ Staff Dashboard
 
                                     <div>
                                         <h6 class="text-muted">
-                                            Open Treks
+                                            Open for Booking
                                         </h6>
 
                                         <h1 class="fw-bold text-success">
-                                            2
+                                            {{ open_treks_count }}
                                         </h1>
 
                                         <small class="text-success">
-                                            Currently Running
+                                            Accepting bookings
                                         </small>
                                     </div>
 
-                                    <i class="bi bi-calendar-check fs-1 text-success"></i>
+                                    <i class="bi bi-door-open fs-1 text-success"></i>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Started Treks -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+
+                                    <div>
+                                        <h6 class="text-muted">
+                                            Started Treks
+                                        </h6>
+
+                                        <h1 class="fw-bold text-info">
+                                            {{ started_treks_count }}
+                                        </h1>
+
+                                        <small class="text-info">
+                                            Currently underway
+                                        </small>
+                                    </div>
+
+                                    <i class="bi bi-calendar-check fs-1 text-info"></i>
 
                                 </div>
                             </div>
@@ -119,7 +146,7 @@ Staff Dashboard
 
                     <div class="card-header bg-white">
                         <h4 class="mb-0">
-                            My Assigned Treks
+                             Treks Assigned to ME !!
                         </h4>
                     </div>
 
@@ -129,73 +156,57 @@ Staff Dashboard
 
                             <thead class="table-light">
                                 <tr>
-                                    <th>Trek</th>
-                                    <th>Location</th>
-                                    <th>Participants</th>
-                                    <th>Slots</th>
-                                    <th>Status</th>
+                                    <th>Trek ID</th>
+                                    <th>Trek Name</th>
+                                    <th>Trek Location</th>
+                                    <th>Booked Participants</th>
+                                    <th>Total Slots</th>
+                                    <th>Trek Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
 
                             <tbody>
-
+                                {% if assigned_treks|length == 0 %}
                                 <tr>
-                                    <td>Everest Base Camp</td>
-                                    <td>Nepal</td>
-                                    <td>12</td>
-                                    <td>10</td>
+                                    <td colspan="7" class="text-center py-4">
+                                        No treks assigned to you yet.
+                                    </td>
+                                </tr>
+                                {% endif %}
+
+                                {% for trek in assigned_treks %}
+                                <tr>
+                                    <td>{{ trek.id }}</td>
+                                    <td>{{ trek.name }}</td>
+                                    <td>{{ trek.location }}</td>
+                                    <td>{{ trek.booked_participants }}</td>
+                                    <td>{{ trek.available_slots }} / {{ trek.total_slots }}</td>
 
                                     <td>
-                                        <span class="badge bg-success">
-                                            Open
-                                        </span>
+                                        {% if trek.status.value == 'open' %}
+                                        <span class="badge bg-success">Open</span>
+                                        {% elif trek.status.value == 'closed' %}
+                                        <span class="badge bg-danger">Closed</span>
+                                        {% elif trek.status.value == 'started' %}
+                                        <span class="badge bg-info">Started</span>
+                                        {% elif trek.status.value == 'completed' %}
+                                        <span class="badge bg-secondary">Completed</span>
+                                        {% elif trek.status.value == 'approved' %}
+                                        <span class="badge bg-primary">Approved</span>
+                                        {% else %}
+                                        <span class="badge bg-light text-dark text-capitalize">{{ trek.status.value }}</span>
+                                        {% endif %}
                                     </td>
 
                                     <td>
-                                        <a href="#" class="btn btn-outline-success btn-sm">
+                                        <a href="/trekstaff/manage-trek/{{ trek.id }}" class="btn btn-outline-success btn-sm">
                                             Manage
                                         </a>
                                     </td>
                                 </tr>
+                                {% endfor %}
 
-                                <tr>
-                                    <td>Roopkund Trek</td>
-                                    <td>Uttarakhand</td>
-                                    <td>8</td>
-                                    <td>15</td>
-
-                                    <td>
-                                        <span class="badge bg-success">
-                                            Open
-                                        </span>
-                                    </td>
-
-                                    <td>
-                                        <a href="#" class="btn btn-outline-success btn-sm">
-                                            Manage
-                                        </a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>Kedarkantha</td>
-                                    <td>Uttarakhand</td>
-                                    <td>12</td>
-                                    <td>20</td>
-
-                                    <td>
-                                        <span class="badge bg-danger">
-                                            Closed
-                                        </span>
-                                    </td>
-
-                                    <td>
-                                        <a href="#" class="btn btn-outline-success btn-sm">
-                                            Manage
-                                        </a>
-                                    </td>
-                                </tr>
 
                             </tbody>
 
@@ -205,6 +216,26 @@ Staff Dashboard
 
                 </div>
 
+
+                <!-- See All Treks -->
+                <div class="card shadow-sm mt-4 border-0 bg-success text-white">
+                    <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 p-4">
+                        <div>
+                            <h5 class="fw-bold mb-1 d-flex align-items-center gap-2">
+                                <i class="bi bi-compass"></i>
+                                Explore All Your Treks
+                            </h5>
+                            <p class="mb-0 text-white-50">
+                                View complete trek details, dates, slots, difficulty and status in one place.
+                            </p>
+                        </div>
+
+                        <a href="/trekstaff/my-treks" class="btn btn-light btn-lg fw-semibold px-4">
+                            See All My Treks
+                            <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
 
         </div>

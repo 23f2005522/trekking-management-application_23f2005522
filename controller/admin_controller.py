@@ -42,7 +42,7 @@ def search_all(query):
     if not query:
         return {"trekkers": [], "staff": [], "treks": []}
 
-    like = f"%{query}%"
+    like = f"%{query}%" # if query is a string
 
     trekkers = UserModel.query.filter(
         UserModel.role == UserRole.TREKKER,
@@ -60,7 +60,7 @@ def search_all(query):
 
     treks = TrekModel.query.filter(TrekModel.name.ilike(like)).all()
 
-    if query.isdigit():
+    if query.isdigit(): # if query is a number
         num = int(query)
 
         trekker = UserModel.query.filter_by(id=num, role=UserRole.TREKKER).first()
@@ -673,6 +673,7 @@ def generate_report():
     trek_status = {
         "open": TrekModel.query.filter_by(status=TrekStatus.OPEN).count(),
         "closed": TrekModel.query.filter_by(status=TrekStatus.CLOSED).count(),
+        "started": TrekModel.query.filter_by(status=TrekStatus.STARTED).count(),
         "completed": TrekModel.query.filter_by(status=TrekStatus.COMPLETED).count(),
         "pending": TrekModel.query.filter_by(status=TrekStatus.PENDING).count(),
         "approved": TrekModel.query.filter_by(status=TrekStatus.APPROVED).count(),

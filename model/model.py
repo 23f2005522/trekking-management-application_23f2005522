@@ -26,6 +26,7 @@ class TrekStatus(str, Enum):
     APPROVED = "approved"
     OPEN = "open"
     CLOSED = "closed"
+    STARTED = "started"
     COMPLETED = "completed"
 
 

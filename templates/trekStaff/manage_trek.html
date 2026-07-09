@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Trek{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-1 p-0">
+            {% include "trekStaff/sidebar.html" %}
+        </div>
+
+        <div class="col-11">
+            <div class="py-4">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="fw-bold">{{ trek.name }}</h1>
+                        <p class="text-muted mb-0">Manage trek details and participants.</p>
+                    </div>
+                    <a href="/trekstaff/my-treks" class="btn btn-outline-success">
+                        <i class="bi bi-arrow-left me-1"></i> Back to My Treks
+                    </a>
+                </div>
+
+                <!-- Status overview -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h6 class="text-muted">Booking Status</h6>
+                                {% if trek.status.value in ['open', 'closed'] %}
+                                <span
+                                    class="badge bg-{% if trek.status.value == 'open' %}success{% else %}danger{% endif %} fs-6 text-capitalize">
+                                    {{ trek.status.value }} for booking
+                                </span>
+                                {% elif trek.status.value == 'approved' %}
+                                <span class="badge bg-primary fs-6">Approved — set Open or Closed below</span>
+                                {% else %}
+                                <span class="badge bg-secondary fs-6 text-capitalize">{{ trek.status.value }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h6 class="text-muted">Trek Progress</h6>
+                                {% if trek.status.value == 'started' %}
+                                <span class="badge bg-info fs-6">Started</span>
+                                {% elif trek.status.value == 'completed' %}
+                                <span class="badge bg-secondary fs-6">Completed</span>
+                                {% else %}
+                                <span class="badge bg-light text-dark fs-6">Not started yet</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trek Information -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white fw-bold">
+                        Trek Information
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/trekstaff/manage-trek/{{ trek.id }}">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">Location</label>
+                                    <input type="text" class="form-control" value="{{ trek.location }}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">Duration</label>
+                                    <input type="text" class="form-control" value="{{ trek.duration }} Days" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">Start Date</label>
+                                    <input type="text" class="form-control"
+                                        value="{{ trek.starting_at.strftime('%d %b %Y') }}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">End Date</label>
+                                    <input type="text" class="form-control"
+                                        value="{{ trek.ending_at.strftime('%d %b %Y') }}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">Total Slots</label>
+                                    <input type="text" class="form-control" value="{{ trek.total_slots }}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Available Slots</label>
+                                    <input type="number" name="available_slots" class="form-control" min="0"
+                                        max="{{ trek.total_slots }}" value="{{ trek.available_slots }}" required>
+                                </div>
+
+                                {% if trek.status.value not in ['started', 'completed'] %}
+                                <div class="col-md-6">
+                                    <label class="form-label">Booking Status</label>
+                                    <select name="status" class="form-select" required>
+                                        <option value="open" {% if trek.status.value=='open' %}selected{% endif %}>Open
+                                            for Booking</option>
+                                        <option value="closed" {% if trek.status.value=='closed' %}selected{% endif %}>
+                                            Closed for Booking</option>
+                                    </select>
+                                    <small class="text-muted">Controls whether trekkers can book this trek.</small>
+                                </div>
+                                {% else %}
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">Booking Status</label>
+                                    <input type="text" class="form-control"
+                                        value="Locked (trek already {{ trek.status.value }})" readonly>
+                                </div>
+                                {% endif %}
+
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-success">
+                                        Update Trek
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Participants -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white fw-bold">
+                        Participants ({{ trek.booked_participants }})
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>User Name</th>
+                                    <th>Email</th>
+                                    <th>Booking Date</th>
+                                    <th>Booking Status</th>
+                                    <th>Payment Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if bookings|length == 0 %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">No participants yet.</td>
+                                </tr>
+                                {% endif %}
+
+                                {% for booking in bookings %}
+                                <tr>
+                                    <td class="fw-semibold">{{ booking.user.username }}</td>
+                                    <td>{{ booking.user.email }}</td>
+                                    <td>{{ booking.booking_date.strftime("%d %b %Y") }}</td>
+                                    <td>
+                                        <span class="badge bg-primary text-capitalize">{{ booking.status.value }}</span>
+                                    </td>
+                                    <td>
+                                        {% if booking.payment_status.value == 'paid' %}
+                                        <span class="badge bg-success">Paid</span>
+                                        {% else %}
+                                        <span class="badge bg-warning text-dark text-capitalize">{{
+                                            booking.payment_status.value }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="/trekstaff/toggle-payment/{{ booking.id }}"
+                                            class="d-inline">
+                                            <input type="hidden" name="next" value="manage_trek">
+                                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                                {% if booking.payment_status.value == 'paid' %}
+                                                Mark Pending
+                                                {% else %}
+                                                Mark Paid
+                                                {% endif %}
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Trek Progress Actions -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white fw-bold">
+                        Trek Progress
+                    </div>
+                    <div class="card-body d-flex flex-wrap gap-2">
+                        <form method="POST" action="/trekstaff/manage-trek/{{ trek.id }}/mark-started"
+                            onsubmit="return confirm('Are you sure you want to mark this trek as started?');">
+                            <button type="submit" class="btn btn-outline-primary" {% if trek.status.value in
+                                ['started', 'completed' ] %}disabled{% endif %}>
+                                Mark as Started
+                            </button>
+                        </form>
+                        <form method="POST" action="/trekstaff/manage-trek/{{ trek.id }}/mark-completed"
+                            onsubmit="return confirm('Are you sure you want to mark this trek as completed?');">
+                            <button type="submit" class="btn btn-success" {% if trek.status.value !='started'
+                                %}disabled{% endif %}>
+                                Mark as Completed
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
