@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+
+<style>
+  .status-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .status-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+  }
+</style>
+
+<div class="container">
+  <div class="row flex justify-content-between">
+    <div class="col-1 p-0">
+      {% include "admin/sidebar.html" %}
+    </div>
+
+    <div class="col-11">
+      <div class="py-4">
+
+        <!-- heading -->
+        <div>
+          <h1 class="fw-bold mb-1 d-flex align-items-center gap-2">
+            <i class="bi bi-graph-up-arrow text-success"></i>
+            Trekking Statistics & Reports
+          </h1>
+          <p class="text-muted mb-4">
+            Platform overview, trek stats, bookings, payments, and popular treks.
+          </p>
+        </div>
+
+
+
+        <!-- Overview -->
+        <h4 class="mb-3 d-flex align-items-center gap-2 fw-semibold text-secondary">
+          <i class="bi bi-grid-1x2-fill text-muted"></i> Overview
+        </h4>
+
+        <div class="row g-3 mb-5">
+          <div class="col-md-6 col-lg-3">
+            <div class="card status-card bg-primary text-white border-0 shadow-sm">
+              <div class="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                  <h3 class="fw-bold mb-1">{{ overview.total_trekkers }}</h3>
+                  <small class="text-white-50 text-uppercase fw-bold">Total Trekkers</small>
+                </div>
+                <i class="bi bi-people-fill fs-1 opacity-75"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="card status-card bg-success text-white border-0 shadow-sm">
+              <div class="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                  <h3 class="fw-bold mb-1">{{ overview.total_staff }}</h3>
+                  <small class="text-white-50 text-uppercase fw-bold">Total Staff</small>
+                </div>
+                <i class="bi bi-person-badge-fill fs-1 opacity-75"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="card status-card bg-info text-white border-0 shadow-sm">
+              <div class="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                  <h3 class="fw-bold mb-1">{{ overview.total_treks }}</h3>
+                  <small class="text-white-50 text-uppercase fw-bold">Total Treks</small>
+                </div>
+                <i class="bi bi-compass-fill fs-1 opacity-75"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="card status-card bg-warning text-dark border-0 shadow-sm">
+              <div class="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                  <h3 class="fw-bold mb-1">{{ overview.total_bookings }}</h3>
+                  <small class="text-uppercase fw-bold opacity-75">Total Bookings</small>
+                </div>
+                <i class="bi bi-journal-bookmark-fill fs-1 opacity-75"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+        <!-- Trek Status -->
+        <h4 class="mb-3 d-flex align-items-center gap-2 fw-semibold text-secondary">
+          <i class="bi bi-activity text-muted"></i> Trek Status
+        </h4>
+
+        <div class="row g-3 mb-5">
+          {% for key, value in trek_status.items() %}
+          <div class="col-6 col-md-4 col-lg-2">
+            <div class="card status-card bg-secondary text-white border-0 shadow-sm">
+              <div class="card-body text-center p-3">
+                <i class="bi bi-tags fs-3 mb-2 opacity-75 d-block"></i>
+                <h4 class="fw-bold mb-1">{{ value }}</h4>
+                <small class="text-capitalize text-white-50 fw-semibold">{{ key }}</small>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+
+
+
+
+
+        <!-- Booking Status -->
+        <h4 class="mb-3 d-flex align-items-center gap-2 fw-semibold text-secondary">
+          <i class="bi bi-calendar-check text-muted"></i> Booking Status
+        </h4>
+
+        <div class="row g-3 mb-5">
+          {% for key, value in booking_status.items() %}
+          <div class="col-md-4">
+            <div class="card status-card bg-dark text-white border-0 shadow-sm">
+              <div class="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                  <h4 class="fw-bold mb-1">{{ value }}</h4>
+                  <small class="text-capitalize text-white-50 fw-semibold">{{ key }}</small>
+                </div>
+                <i class="bi bi-bookmark-plus fs-2 opacity-50"></i>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+
+
+
+
+
+
+        <!-- Payment Statistics -->
+        <h4 class="mb-3 d-flex align-items-center gap-2 fw-semibold text-secondary">
+          <i class="bi bi-credit-card-2-back text-muted"></i> Payment Statistics
+        </h4>
+
+        <div class="row g-3 mb-5">
+          <div class="col-md-4">
+            <div class="card status-card border-start border-success border-4 shadow-sm">
+              <div class="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                  <h4 class="fw-bold text-success mb-1">{{ payment_statistics.paid }}</h4>
+                  <small class="text-muted fw-semibold">Paid Bookings</small>
+                </div>
+                <i class="bi bi-check-circle-fill text-success fs-2"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="card status-card border-start border-warning border-4 shadow-sm">
+              <div class="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                  <h4 class="fw-bold text-warning mb-1">{{ payment_statistics.pending }}</h4>
+                  <small class="text-muted fw-semibold">Pending Payments</small>
+                </div>
+                <i class="bi bi-hourglass-split text-warning fs-2"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="card status-card bg-danger text-white border-0 shadow-sm">
+              <div class="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                  <h4 class="fw-bold mb-1">₹{{ payment_statistics.revenue }}</h4>
+                  <small class="text-white-50 fw-semibold">Total Revenue</small>
+                </div>
+                <i class="bi bi-currency-rupee fs-2 opacity-75"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+
+        <!-- Popular Treks -->
+        <div class="card status-card border-0 shadow-sm">
+          <div class="card-header bg-white border-bottom py-3">
+            <h5 class="mb-0 fw-bold d-flex align-items-center gap-2">
+              <i class="bi bi-fire text-danger"></i>
+              Top 5 Most Popular Treks
+            </h5>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 10%">#</th>
+                  <th style="width: 60%">Trek Name</th>
+                  <th style="width: 30%">Total Bookings</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {% if popular_treks|length == 0 %}
+                <tr>
+                  <td colspan="3" class="text-center py-4">
+                    No booking data available yet.
+                  </td>
+                </tr>
+                {% endif %}
+
+                {% for trek in popular_treks %}
+                <tr>
+                  <td>
+                    {% if loop.index == 1 %}
+                    <span class="badge rounded-circle bg-warning text-dark">{{ loop.index }}</span>
+                    {% elif loop.index == 2 %}
+                    <span class="badge rounded-circle bg-secondary">{{ loop.index }}</span>
+                    {% else %}
+                    <span class="badge rounded-circle bg-light text-dark">{{ loop.index }}</span>
+                    {% endif %}
+                  </td>
+                  <td class="fw-semibold">{{ trek.trek_name }}</td>
+                  <td>
+                    <span
+                      class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2">
+                      {{ trek.booking_count }} Bookings
+                    </span>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

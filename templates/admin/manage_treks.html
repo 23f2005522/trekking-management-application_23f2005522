@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Treks{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row flex justify-content-between">
+
+        <!-- Sidebar -->
+        <div class="col-1 p-0">
+            {% include "admin/sidebar.html" %}
+        </div>
+
+        <!-- Main -->
+        <div class="col-11">
+
+            <div class="py-4">
+
+                <!-- Heading -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="fw-bold">Manage Treks</h1>
+                        <p class="text-muted mb-0">
+                            View, create and manage trekking events.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#createTrekModal">
+                        + Add New Trek
+                    </button>
+                </div>
+
+                <!-- Table -->
+                <div class="card shadow-sm">
+                    <div class="table-responsive">
+
+                        <table class="table table-hover align-middle mb-0 table-striped-columns">
+
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Trek ID</th>
+                                    <th>Assigned Staff ID</th>
+                                    <th>Trek Name</th>
+                                    <th>Location</th>
+                                    <th>Difficulty</th>
+                                    <th>Slots</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                {% if treks|length == 0 %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        No treks found.
+                                    </td>
+                                </tr>
+                                {% endif %}
+
+                                {% for trek in treks %}
+                                <tr>
+
+                                    <td>{{ trek.id }}</td>
+                                    <td>{{ trek.assigned_staff_id }}</td>
+                                    <td>{{ trek.name }}</td>
+                                    <td>{{ trek.location }}</td>
+                                    <td>{{ trek.difficulty.value }}</td>
+                                    <td>{{ trek.available_slots }}</td>
+
+                                    <td>
+                                        {% if trek.status.value == "pending" %}
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                        {% elif trek.status.value == "approved" %}
+                                        <span class="badge bg-primary">Approved</span>
+                                        {% elif trek.status.value == "open" %}
+                                        <span class="badge bg-success">Open</span>
+                                        {% elif trek.status.value == "closed" %}
+                                        <span class="badge bg-danger">Closed</span>
+                                        {% elif trek.status.value == "completed" %}
+                                        <span class="badge bg-secondary">Completed</span>
+                                        {% else %}
+                                        <span class="badge bg-light text-dark">{{ trek.status.value|capitalize }}</span>
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+
+                                        <a href="/admin/edittrek/{{ trek.id }}"
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        <form
+                                            action="/admin/manage_treks/delete/{{ trek.id }}"
+                                            method="POST"
+                                            class="d-inline"
+                                            onsubmit="return confirm('Do you want to delete this trek?');">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+
+                                    </td>
+
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- Create Trek Modal -->
+{% include "admin/create_trek_modal.html" %}
+
+{% endblock %}

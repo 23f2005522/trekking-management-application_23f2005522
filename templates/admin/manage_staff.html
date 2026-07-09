@@ -1,5 +1,8 @@
-{% extends "base.html" %} {% block title %} Admin Dashboard {% endblock %} {%
-block content %}
+{% extends "base.html" %}
+{% block title %} Admin Dashboard {% endblock %} 
+
+
+{%block content %}
 
 <div class="container">
   <div class="row flex justify-content-between">
@@ -12,12 +15,24 @@ block content %}
     <div class="col-11">
       <div class="py-4">
         <!-- heading -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h1 class="fw-bold">Manage Staff</h1>
 
-        <h1 class="fw-bold">Manage Staff</h1>
+            <p class="text-muted mb-0">
+              Create staff accounts and manage approvals, rejections, and blacklisting.
+            </p>
+          </div>
 
-        <p class="text-muted">
-          Review staff registration requests and manage staff accounts.
-        </p>
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#createStaffModal"
+          >
+            + Create Staff
+          </button>
+        </div>
 
         <!-- Tabs -->
 
@@ -70,7 +85,7 @@ block content %}
                 <table class="table table-hover align-middle mb-0">
                   <thead class="table-light">
                     <tr>
-                      <th>ID</th>
+                      <th>Staff ID</th>
                       <th>Name</th>
                       <th>Email</th>
                       <th>Contact</th>
@@ -82,26 +97,24 @@ block content %}
                   <tbody>
                     {% if pending_staff_members|length == 0 %}
                     <tr>
-                      <td colspan="5" class="text-center">
+                      <td colspan="6" class="text-center">
                         No new staff members's approval pending .
                       </td>
                     </tr>
                     {% endif %} {% for staff in pending_staff_members %}
                     <tr>
-                      <td>{{ staff.id }}</td>
+                      <td>{{ staff.staff_profile.id }}</td>
                       <td>{{ staff.username }}</td>
                       <td>{{ staff.email }}</td>
                       <td>{{ staff.staff_profile.contact_number }}</td>
 
                       <td>
-                        <!-- status -->
                         <span class="badge bg-warning text-dark">
                           Pending
                         </span>
                       </td>
 
                       <td>
-                        <!--  Action Buttons -->
                         <div class="d-flex gap-2">
                           <form
                             action="/admin/manage_staff/approve_staff/{{ staff.id }}"
@@ -144,30 +157,49 @@ block content %}
                 <table class="table table-hover align-middle mb-0">
                   <thead class="table-light">
                     <tr>
-                      <th>ID</th>
+                      <th>Staff ID</th>
                       <th>Name</th>
                       <th>Email</th>
                       <th>Contact</th>
                       <th>Status</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
 
                   <tbody>
                     {% if approved_staff_members|length == 0 %}
                     <tr>
-                      <td colspan="5" class="text-center">
+                      <td colspan="6" class="text-center">
                         No approved staff members found.
                       </td>
                     </tr>
                     {% endif %} {% for staff in approved_staff_members %}
                     <tr>
-                      <td>{{ staff.id }}</td>
+                      <td>{{ staff.staff_profile.id }}</td>
                       <td>{{ staff.username }}</td>
                       <td>{{ staff.email }}</td>
                       <td>{{ staff.staff_profile.contact_number }}</td>
 
                       <td>
                         <span class="badge bg-success"> Approved </span>
+                      </td>
+
+                      <td>
+                        <form
+                          action="/admin/manage_staff/blacklist_staff/{{ staff.id }}"
+                          method="POST"
+                          class="d-flex gap-2 align-items-center"
+                        >
+                          <input
+                            type="text"
+                            class="form-control form-control-sm"
+                            name="blacklisted_reason"
+                            placeholder="Reason (optional)"
+                          />
+                          <button type="submit" class="btn btn-danger btn-sm text-nowrap">
+                            Blacklist
+                          </button>
+                        </form>
                       </td>
                     </tr>
                     {% endfor %}
@@ -185,30 +217,42 @@ block content %}
                 <table class="table table-hover align-middle mb-0">
                   <thead class="table-light">
                     <tr>
-                      <th>ID</th>
+                      <th>Staff ID</th>
                       <th>Name</th>
                       <th>Email</th>
                       <th>Reason</th>
                       <th>Status</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
 
                   <tbody>
                     {% if blacklisted_staff_members|length == 0 %}
                     <tr>
-                      <td colspan="5" class="text-center">
+                      <td colspan="6" class="text-center">
                         No blacklisted staff members found.
                       </td>
                     </tr>
                     {% endif %} {% for staff in blacklisted_staff_members %}
                     <tr>
-                      <td>{{ staff.id }}</td>
+                      <td>{{ staff.staff_profile.id }}</td>
                       <td>{{ staff.username }}</td>
                       <td>{{ staff.email }}</td>
-                      <td>{{ staff.staff_profile.blacklisted_reason }}</td>
+                      <td>{{ staff.blacklisted_reason or "No reason provided" }}</td>
 
                       <td>
                         <span class="badge bg-danger"> Blacklisted </span>
+                      </td>
+
+                      <td>
+                        <form
+                          action="/admin/manage_staff/deblacklist_staff/{{ staff.id }}"
+                          method="POST"
+                        >
+                          <button type="submit" class="btn btn-success btn-sm">
+                            Approve Again
+                          </button>
+                        </form>
                       </td>
                     </tr>
                     {% endfor %}
@@ -219,6 +263,139 @@ block content %}
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Staff Modal -->
+<div
+  class="modal fade"
+  id="createStaffModal"
+  tabindex="-1"
+  aria-labelledby="createStaffModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="createStaffModalLabel">
+          Create Staff
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <form action="/admin/create_staff" method="POST">
+        <div class="modal-body">
+          <p class="text-muted">
+            Enter staff account details. A staff profile will be created
+            automatically.
+          </p>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Username</label>
+              <input
+                type="text"
+                class="form-control"
+                name="username"
+                placeholder="Enter username"
+                required
+              />
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Email</label>
+              <input
+                type="email"
+                class="form-control"
+                name="email"
+                placeholder="Enter email"
+                required
+              />
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Phone</label>
+              <input
+                type="tel"
+                class="form-control"
+                name="phone"
+                placeholder="Enter phone number"
+                required
+              />
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                name="password"
+                placeholder="Enter password"
+                required
+              />
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Confirm Password</label>
+              <input
+                type="password"
+                class="form-control"
+                name="confirm_password"
+                placeholder="Re-enter password"
+                required
+              />
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Experience (Years)</label>
+              <input
+                type="number"
+                class="form-control"
+                name="experience"
+                min="0"
+                value="0"
+              />
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Address</label>
+              <input
+                type="text"
+                class="form-control"
+                name="address"
+                placeholder="Enter address"
+              />
+            </div>
+
+            <div class="col-12 mb-3">
+              <label class="form-label">Staff Bio</label>
+              <textarea
+                class="form-control"
+                name="staff_bio"
+                rows="3"
+                placeholder="Short bio about the staff member"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-success px-4">Create</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

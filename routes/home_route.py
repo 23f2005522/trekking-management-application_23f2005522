@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template, request 
+from flask import Blueprint
+from controller import home_controller as home_ctrl
+
+home_bp = Blueprint("home", __name__, url_prefix="/")
 
 
-home_bp = Blueprint("home" , __name__ , url_prefix="/") 
-
-@home_bp.route("/" , methods  = ["GET"])
-def home() : 
-    if request.method == "GET":
-        return render_template("index.html")    
+@home_bp.route("/", methods=["GET"])
+def home():
+    return home_ctrl.home()

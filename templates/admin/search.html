@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row flex justify-content-between">
+    <div class="col-1 p-0">
+      {% include "admin/sidebar.html" %}
+    </div>
+
+    <div class="col-11">
+      <div class="py-4">
+        <h1 class="fw-bold d-flex align-items-center gap-2">
+          <i class="bi bi-search text-success"></i>
+          Search
+        </h1>
+        <p class="text-muted mb-4">
+          Search by trekker ID, trekker name, staff ID, staff name, trek ID, or trek name.
+        </p>
+
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <form method="GET" action="/admin/search" class="row g-2 align-items-center">
+              <div class="col-md-10">
+                <input
+                  type="text"
+                  name="q"
+                  class="form-control form-control-lg"
+                  placeholder="Enter ID or name..."
+                  value="{{ query }}"
+                  autofocus
+                >
+              </div>
+              <div class="col-md-2">
+                <button type="submit" class="btn btn-success btn-lg w-100">
+                  <i class="bi bi-search me-1"></i> Search
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {% if query %}
+        {% set total = trekkers|length + staff|length + treks|length %}
+
+        {% if total == 0 %}
+        <div class="alert alert-warning">
+          No results found for <strong>"{{ query }}"</strong>.
+        </div>
+        {% else %}
+
+        <p class="text-muted mb-4">
+          Found {{ total }} result(s) for <strong>"{{ query }}"</strong>.
+        </p>
+
+        <!-- Trekkers -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-white fw-bold">
+            <i class="bi bi-people me-2 text-success"></i>
+            Trekkers ({{ trekkers|length }})
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Trekker ID</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if trekkers|length == 0 %}
+                <tr>
+                  <td colspan="5" class="text-center py-3 text-muted">No trekkers found.</td>
+                </tr>
+                {% endif %}
+                {% for trekker in trekkers %}
+                <tr>
+                  <td>{{ trekker.id }}</td>
+                  <td class="fw-semibold">{{ trekker.username }}</td>
+                  <td>{{ trekker.email }}</td>
+                  <td>{{ trekker.phone }}</td>
+                  <td>
+                    {% if trekker.is_active %}
+                    <span class="badge bg-success">Active</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Inactive</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Staff -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-white fw-bold">
+            <i class="bi bi-person-badge me-2 text-primary"></i>
+            Staff ({{ staff|length }})
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Staff ID</th>
+                  <th>User ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Experience</th>
+                  <th>Profile Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if staff|length == 0 %}
+                <tr>
+                  <td colspan="6" class="text-center py-3 text-muted">No staff found.</td>
+                </tr>
+                {% endif %}
+                {% for member in staff %}
+                <tr>
+                  <td>{{ member.id }}</td>
+                  <td>{{ member.user_id }}</td>
+                  <td class="fw-semibold">{{ member.user.username if member.user else '—' }}</td>
+                  <td>{{ member.user.email if member.user else '—' }}</td>
+                  <td>{{ member.experience }} yrs</td>
+                  <td>
+                    <span class="badge bg-secondary text-capitalize">{{ member.Profile_status.value }}</span>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Treks -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-white fw-bold">
+            <i class="bi bi-compass me-2 text-info"></i>
+            Treks ({{ treks|length }})
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Trek ID</th>
+                  <th>Trek Name</th>
+                  <th>Location</th>
+                  <th>Difficulty</th>
+                  <th>Status</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if treks|length == 0 %}
+                <tr>
+                  <td colspan="6" class="text-center py-3 text-muted">No treks found.</td>
+                </tr>
+                {% endif %}
+                {% for trek in treks %}
+                <tr>
+                  <td>{{ trek.id }}</td>
+                  <td class="fw-semibold">{{ trek.name }}</td>
+                  <td>{{ trek.location }}</td>
+                  <td class="text-capitalize">{{ trek.difficulty.value }}</td>
+                  <td>
+                    <span class="badge bg-secondary text-capitalize">{{ trek.status.value }}</span>
+                  </td>
+                  <td>₹{{ trek.price }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {% endif %}
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

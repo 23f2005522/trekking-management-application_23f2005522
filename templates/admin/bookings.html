@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Bookings{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row flex justify-content-between">
+    <div class="col-1 p-0">
+      {% include "admin/sidebar.html" %}
+    </div>
+
+    <div class="col-11">
+      <div class="py-4">
+        <h1 class="fw-bold">Bookings</h1>
+        <p class="text-muted mb-0">
+          All trek bookings — most recent first.
+        </p>
+
+        <div class="card shadow-sm mt-4">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Trekker</th>
+                  <th>Trek and trekId</th>
+                  <th>Booking Date</th>
+                  <th>Trek Status</th>
+                  <th>Booking Status</th>
+                  <th>Payment Status</th>
+                  <th>Amount Paid</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {% if bookings|length == 0 %}
+                <tr>
+                  <td colspan="8" class="text-center py-4">
+                    No bookings found.
+                  </td>
+                </tr>
+                {% endif %}
+
+                {% for booking in bookings %}
+                <tr>
+                  <td>{{ booking.id }}</td>
+                  <td>{{ booking.user.username }}</td>
+                  <td>{{ booking.trek.name }} - {{ booking.trek.id }}</td>
+                  <td>{{ booking.booking_date.strftime('%d %b %Y, %I:%M %p') }}</td>
+
+                  <td>
+                    {% if booking.trek.status.value == 'pending' %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                    {% elif booking.trek.status.value == 'approved' %}
+                    <span class="badge bg-primary">Approved</span>
+                    {% elif booking.trek.status.value == 'open' %}
+                    <span class="badge bg-success">Open</span>
+                    {% elif booking.trek.status.value == 'closed' %}
+                    <span class="badge bg-danger">Closed</span>
+                    {% elif booking.trek.status.value == 'completed' %}
+                    <span class="badge bg-secondary">Completed</span>
+                    {% else %}
+                    <span class="badge bg-light text-dark">{{ booking.trek.status.value|capitalize }}</span>
+                    {% endif %}
+                  </td>
+
+                  <td>
+                    {% if booking.status.value == 'booked' %}
+                    <span class="badge bg-warning text-dark">Booked</span>
+                    {% elif booking.status.value == 'canceled' or booking.status.value == 'cancelled' %}
+                    <span class="badge bg-danger">Canceled</span>
+                    {% elif booking.status.value == 'completed' or booking.status.value == 'comepleted' %}
+                    <span class="badge bg-success">Completed</span>
+                    {% else %}
+                    <span class="badge bg-secondary">{{ booking.status.value|capitalize }}</span>
+                    {% endif %}
+                  </td>
+
+                  <td>
+                    {% if booking.payment_status.value == 'paid' %}
+                    <span class="badge bg-success">Paid</span>
+                    {% elif booking.payment_status.value == 'pending' %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                    {% elif booking.payment_status.value == 'completed' %}
+                    <span class="badge bg-primary">Completed</span>
+                    {% elif booking.payment_status.value == 'failed' %}
+                    <span class="badge bg-danger">Failed</span>
+                    {% else %}
+                    <span class="badge bg-secondary">{{ booking.payment_status.value|capitalize }}</span>
+                    {% endif %}
+                  </td>
+
+                  <td>₹{{ booking.amount_paid }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

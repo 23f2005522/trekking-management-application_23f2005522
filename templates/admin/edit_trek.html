@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Trek{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row flex justify-content-between">
+    <div class="col-1 p-0">{% include "admin/sidebar.html" %}</div>
+
+    <div class="col-11">
+      <div class="py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h1 class="fw-bold">Edit Trek</h1>
+            <p class="text-muted mb-0">
+              Update trek #{{ trek.id }} details and save changes.
+            </p>
+          </div>
+
+          <a href="/admin/manage_treks" class="btn btn-outline-secondary">
+            ← Back to Manage Treks
+          </a>
+        </div>
+
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <form action="/admin/edittrek/{{ trek.id }}" method="POST">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Trek Name</label>
+                  <input type="text" class="form-control" name="name" value="{{ form_data.name }}" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Location</label>
+                  <input type="text" class="form-control" name="location" value="{{ form_data.location }}" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Difficulty</label>
+                  <select class="form-select" name="difficulty" required>
+                    <option value="">-- Select Difficulty --</option>
+                    <option value="easy" {% if form_data.difficulty == 'easy' %}selected{% endif %}>Easy</option>
+                    <option value="moderate" {% if form_data.difficulty == 'moderate' %}selected{% endif %}>Moderate</option>
+                    <option value="difficult" {% if form_data.difficulty == 'difficult' %}selected{% endif %}>Difficult</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Duration (Days)</label>
+                  <input type="number" class="form-control" name="duration" min="1" value="{{ form_data.duration }}" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Total Slots</label>
+                  <input type="number" class="form-control" name="total_slots" min="1" value="{{ form_data.total_slots }}" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Price (₹)</label>
+                  <input type="number" class="form-control" name="price" step="0.01" min="0" value="{{ form_data.price }}" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Start Date</label>
+                  <input type="datetime-local" class="form-control" name="starting_at" value="{{ form_data.starting_at }}" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">End Date</label>
+                  <input type="datetime-local" class="form-control" name="ending_at" value="{{ form_data.ending_at }}" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Assign Staff (Staff ID)</label>
+                  <select class="form-select" name="assigned_staff_id" required>
+                    <option value="">-- Select Staff --</option>
+                    {% for staff in staffs %}
+                    <option value="{{ staff.staff_profile.id }}" {% if form_data.assigned_staff_id|string == staff.staff_profile.id|string %}selected{% endif %}>
+                      {{ staff.username }} — Staff ID: {{ staff.staff_profile.id }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Status</label>
+                  <select class="form-select" name="status" required>
+                    <option value="">-- Select Status --</option>
+                    <option value="pending" {% if form_data.status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="approved" {% if form_data.status == 'approved' %}selected{% endif %}>Approved</option>
+                    <option value="open" {% if form_data.status == 'open' %}selected{% endif %}>Open</option>
+                    <option value="closed" {% if form_data.status == 'closed' %}selected{% endif %}>Closed</option>
+                    <option value="completed" {% if form_data.status == 'completed' %}selected{% endif %}>Completed</option>
+                  </select>
+                </div>
+
+                <div class="col-12 mb-3">
+                  <label class="form-label">Image URL</label>
+                  <input type="url" class="form-control" name="image_url" value="{{ form_data.image_url }}" />
+                </div>
+
+                <div class="col-12 mb-3">
+                  <label class="form-label">Description</label>
+                  <textarea class="form-control" rows="5" name="description">{{ form_data.description }}</textarea>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-end gap-2 mt-3">
+                <a href="/admin/manage_treks" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

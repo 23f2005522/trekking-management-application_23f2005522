@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Trekkers{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row flex justify-content-between">
+    <div class="col-1 p-0">
+      {% include "admin/sidebar.html" %}
+    </div>
+
+    <div class="col-11">
+      <div class="py-4">
+        <h1 class="fw-bold">Manage Trekkers</h1>
+        <p class="text-muted">
+          View all registered trekkers and activate or deactivate their accounts.
+        </p>
+
+        <div class="card shadow-sm mt-4">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>User ID</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {% if trekkers|length == 0 %}
+                <tr>
+                  <td colspan="6" class="text-center py-4">
+                    No trekkers found.
+                  </td>
+                </tr>
+                {% endif %}
+
+                {% for trekker in trekkers %}
+                <tr>
+                  <td>{{ trekker.id }}</td>
+                  <td>{{ trekker.username }}</td>
+                  <td>{{ trekker.email }}</td>
+                  <td>{{ trekker.phone }}</td>
+
+                  <td>
+                    {% if trekker.is_active %}
+                    <span class="badge bg-success">Active</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Inactive</span>
+                    {% endif %}
+                  </td>
+
+                  <td>
+                    {% if trekker.is_active %}
+                    <form
+                      action="/admin/manage_trekkers/deactivate/{{ trekker.id }}"
+                      method="POST"
+                      class="d-inline"
+                      onsubmit="return confirm('Deactivate this trekker account?');">
+                      <button type="submit" class="btn btn-warning btn-sm">
+                        Deactivate
+                      </button>
+                    </form>
+                    {% else %}
+                    <form
+                      action="/admin/manage_trekkers/reactivate/{{ trekker.id }}"
+                      method="POST"
+                      class="d-inline">
+                      <button type="submit" class="btn btn-success btn-sm">
+                        Reactivate
+                      </button>
+                    </form>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
