@@ -58,6 +58,8 @@
                     <span class="badge bg-success">Open</span>
                     {% elif booking.trek.status.value == 'closed' %}
                     <span class="badge bg-danger">Closed</span>
+                    {% elif booking.trek.status.value == 'started' %}
+                    <span class="badge bg-info">Started</span>
                     {% elif booking.trek.status.value == 'completed' %}
                     <span class="badge bg-secondary">Completed</span>
                     {% else %}

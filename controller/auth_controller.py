@@ -41,6 +41,7 @@ def login():
         flash("Incorrect role selected for this user.", "danger")
         return redirect("/auth/login")
 
+    # if the user is a staff [pending]
     if user.role == UserRole.STAFF:
         staff_status = user.staff_profile.Profile_status
 
@@ -59,6 +60,7 @@ def login():
             flash("Your staff account has been blacklisted.", "danger")
             return redirect("/auth/login")
 
+    # if the user is a trekker [deactivated or blacklisted]
     if user.role == UserRole.TREKKER:
         if not user.is_active:
             flash("Your trekker account has been deactivated. Contact admin.", "danger")
