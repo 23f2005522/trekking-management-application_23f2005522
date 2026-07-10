@@ -60,6 +60,13 @@ def blacklist_staff(user_id):
 def deblacklist_staff(user_id):
     return admin_ctrl.deblacklist_staff(user_id)
 
+# Permanently delete blacklisted staff route
+@admin_bp.route("/manage_staff/delete_staff/<int:user_id>", methods=["POST"])
+@is_logged_in
+@role_required(UserRole.ADMIN)
+def delete_staff_permanently(user_id):
+    return admin_ctrl.delete_staff_permanently(user_id)
+
 # Manage treks route
 @admin_bp.route("/manage_treks", methods=["GET"])
 @is_logged_in
@@ -112,6 +119,21 @@ def deactivate_trekker(user_id):
 @role_required(UserRole.ADMIN)
 def reactivate_trekker(user_id):
     return admin_ctrl.reactivate_trekker(user_id)
+
+
+@admin_bp.route("/manage_trekkers/blacklist/<int:user_id>", methods=["POST"])
+@is_logged_in
+@role_required(UserRole.ADMIN)
+def blacklist_trekker(user_id):
+    return admin_ctrl.blacklist_trekker(user_id)
+
+
+@admin_bp.route("/manage_trekkers/deblacklist/<int:user_id>", methods=["POST"])
+@is_logged_in
+@role_required(UserRole.ADMIN)
+def deblacklist_trekker(user_id):
+    return admin_ctrl.deblacklist_trekker(user_id)
+
 
 # Bookings route
 @admin_bp.route("/bookings", methods=["GET"])

@@ -313,6 +313,42 @@ def deblacklist_staff(user_id):
     return redirect("/admin/manage_staff")
 
 
+def delete_staff_permanently(user_id):
+    staff_user = UserModel.query.get(user_id)
+
+    if not staff_user or staff_user.role != UserRole.STAFF:
+        flash("Staff not found or not a staff member.", "danger")
+        return redirect("/admin/manage_staff")
+
+    if not staff_user.staff_profile:
+        flash("Staff profile not found.", "danger")
+        return redirect("/admin/manage_staff")
+
+    if staff_user.staff_profile.Profile_status != StaffStatus.BLACKLISTED:
+        flash("Only blacklisted staff can be permanently deleted.", "danger")
+        return redirect("/admin/manage_staff")
+
+    try:
+        staff_profile_id = staff_user.staff_profile.id
+
+        assigned_treks = TrekModel.query.filter_by(
+            assigned_staff_id=staff_profile_id
+        ).all()
+        for trek in assigned_treks:
+            trek.assigned_staff_id = None
+
+        db.session.delete(staff_user)
+        db.session.commit()
+
+        flash("Trek staff permanently deleted from the system.", "success")
+        return redirect("/admin/manage_staff")
+
+    except Exception:
+        db.session.rollback()
+        flash("An error occurred while deleting the staff member.", "danger")
+        return redirect("/admin/manage_staff")
+
+
 def manage_treks():
     treks = TrekModel.query.all()
     approved_staffs = get_approved_staff_users()
@@ -625,6 +661,10 @@ def reactivate_trekker(user_id):
         flash("Trekker not found.", "danger")
         return redirect("/admin/manage_trekkers")
 
+    if trekker.is_blacklisted:
+        flash("This trekker is blacklisted. Remove blacklist first.", "danger")
+        return redirect("/admin/manage_trekkers")
+
     if trekker.is_active:
         flash("This trekker account is already active.", "info")
         return redirect("/admin/manage_trekkers")
@@ -633,6 +673,51 @@ def reactivate_trekker(user_id):
     db.session.commit()
 
     flash("Trekker reactivated successfully.", "success")
+    return redirect("/admin/manage_trekkers")
+
+
+def blacklist_trekker(user_id):
+    trekker = UserModel.query.get(user_id)
+    blacklisted_reason = request.form.get("blacklisted_reason")
+
+    if not trekker or trekker.role != UserRole.TREKKER:
+        flash("Trekker not found.", "danger")
+        return redirect("/admin/manage_trekkers")
+
+    if trekker.is_blacklisted:
+        flash("This trekker is already blacklisted.", "info")
+        return redirect("/admin/manage_trekkers")
+
+    if not trekker.is_active:
+        flash("Only active trekkers can be blacklisted.", "danger")
+        return redirect("/admin/manage_trekkers")
+
+    trekker.is_active = False
+    trekker.is_blacklisted = True
+    trekker.blacklisted_reason = blacklisted_reason or "Blacklisted by admin"
+    db.session.commit()
+
+    flash("Trekker blacklisted successfully.", "success")
+    return redirect("/admin/manage_trekkers")
+
+
+def deblacklist_trekker(user_id):
+    trekker = UserModel.query.get(user_id)
+
+    if not trekker or trekker.role != UserRole.TREKKER:
+        flash("Trekker not found.", "danger")
+        return redirect("/admin/manage_trekkers")
+
+    if not trekker.is_blacklisted:
+        flash("This trekker is not blacklisted.", "danger")
+        return redirect("/admin/manage_trekkers")
+
+    trekker.is_active = True
+    trekker.is_blacklisted = False
+    trekker.blacklisted_reason = None
+    db.session.commit()
+
+    flash("Trekker removed from blacklist successfully.", "success")
     return redirect("/admin/manage_trekkers")
 
 

@@ -1,123 +1,56 @@
-<!-- Toggle Button -->
+{% set nav_items = [
+  {'href': '/trekker/dashboard', 'icon': 'bi-speedometer2', 'label': 'Dashboard'},
+  {'href': '/trekker/treks', 'icon': 'bi-signpost-2', 'label': 'Browse Treks'},
+  {'href': '/trekker/bookings', 'icon': 'bi-calendar-check', 'label': 'My Bookings'},
+  {'href': '/trekker/history', 'icon': 'bi-clock-history', 'label': 'History'},
+  {'href': '/trekker/profile', 'icon': 'bi-person-circle', 'label': 'Profile'},
+] %}
+
+<style>
+  #trekkerSidebar .nav-link {
+    text-align: left;
+  }
+
+  #trekkerSidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+</style>
+
 <button
-    class="btn btn-success m-3"
-    type="button"
-    data-bs-toggle="offcanvas"
-    data-bs-target="#trekkerSidebar"
-    aria-controls="trekkerSidebar">
-
-    <i class="bi bi-list"></i>
-
+  class="btn btn-success m-3"
+  type="button"
+  data-bs-toggle="offcanvas"
+  data-bs-target="#trekkerSidebar"
+  aria-controls="trekkerSidebar">
+  <i class="bi bi-list"></i>
 </button>
 
-<!-- Sidebar -->
-<div
-    class="offcanvas offcanvas-start text-bg-success py-4"
-    tabindex="-1"
-    id="trekkerSidebar">
+<div class="offcanvas offcanvas-start text-bg-success" tabindex="-1" id="trekkerSidebar">
+  <div class="offcanvas-header border-bottom">
+    <h5 class="offcanvas-title">
+      <i class="bi bi-mountains me-2"></i>
+      TrekMaster
+    </h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+  </div>
 
-    <div class="offcanvas-header border-bottom">
+  <div class="offcanvas-body d-flex flex-column p-3">
+    <ul class="nav nav-pills flex-column gap-2 flex-grow-1 w-100">
+      {% for item in nav_items %}
+      <li class="nav-item">
+        <a href="{{ item.href }}" class="nav-link text-white">
+          <i class="bi {{ item.icon }} me-2"></i>
+          {{ item.label }}
+        </a>
+      </li>
+      {% endfor %}
 
-        <h5 class="offcanvas-title">
-
-            <i class="bi bi-mountains me-2"></i>
-
-            TrekMaster
-
-        </h5>
-
-        <button
-            type="button"
-            class="btn-close btn-close-white"
-            data-bs-dismiss="offcanvas">
-        </button>
-
-    </div>
-
-    <div class="offcanvas-body d-flex flex-column p-0">
-
-        <ul class="nav nav-pills flex-column p-3 flex-grow-1">
-
-            <li class="nav-item mb-2">
-
-                <a href="/trekker/dashboard"
-                   class="nav-link active bg-white text-success">
-
-                    <i class="bi bi-speedometer2 me-2"></i>
-
-                    Dashboard
-
-                </a>
-
-            </li>
-
-            <li class="nav-item mb-2">
-
-                <a href="/trekker/treks"
-                   class="nav-link text-white">
-
-                    <i class="bi bi-signpost-2 me-2"></i>
-
-                    Browse Treks
-
-                </a>
-
-            </li>
-
-            <li class="nav-item mb-2">
-
-                <a href="/trekker/bookings"
-                   class="nav-link text-white">
-
-                    <i class="bi bi-calendar-check me-2"></i>
-
-                    My Bookings
-
-                </a>
-
-            </li>
-
-            <li class="nav-item mb-2">
-
-                <a href="/trekker/history"
-                   class="nav-link text-white">
-
-                    <i class="bi bi-clock-history me-2"></i>
-
-                    History
-
-                </a>
-
-            </li>
-
-            <li class="nav-item mb-2">
-
-                <a href="/trekker/profile"
-                   class="nav-link text-white">
-
-                    <i class="bi bi-person-circle me-2"></i>
-
-                    Profile
-
-                </a>
-
-            </li>
-
-            <li class="nav-item mt-auto pt-3 border-top">
-
-                <a href="/auth/logout"
-                   class="nav-link text-danger">
-
-                    <i class="bi bi-box-arrow-right me-2"></i>
-
-                    Logout
-
-                </a>
-
-            </li>
-
-        </ul>
-
-    </div>
-
+      <li class="nav-item mt-auto pt-3 border-top">
+        <a href="/auth/logout" class="nav-link text-danger">
+          <i class="bi bi-box-arrow-right me-2"></i>
+          Logout
+        </a>
+      </li>
+    </ul>
+  </div>
 </div>

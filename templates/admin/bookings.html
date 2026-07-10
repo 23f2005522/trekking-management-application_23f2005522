@@ -72,7 +72,7 @@
                     <span class="badge bg-warning text-dark">Booked</span>
                     {% elif booking.status.value == 'canceled' or booking.status.value == 'cancelled' %}
                     <span class="badge bg-danger">Canceled</span>
-                    {% elif booking.status.value == 'completed' or booking.status.value == 'comepleted' %}
+                    {% elif booking.status.value == 'completed' %}
                     <span class="badge bg-success">Completed</span>
                     {% else %}
                     <span class="badge bg-secondary">{{ booking.status.value|capitalize }}</span>
@@ -84,10 +84,10 @@
                     <span class="badge bg-success">Paid</span>
                     {% elif booking.payment_status.value == 'pending' %}
                     <span class="badge bg-warning text-dark">Pending</span>
-                    {% elif booking.payment_status.value == 'completed' %}
-                    <span class="badge bg-primary">Completed</span>
                     {% elif booking.payment_status.value == 'failed' %}
                     <span class="badge bg-danger">Failed</span>
+                    {% elif booking.payment_status.value == 'completed' %}
+                    <span class="badge bg-primary">Completed</span>
                     {% else %}
                     <span class="badge bg-secondary">{{ booking.payment_status.value|capitalize }}</span>
                     {% endif %}

@@ -71,7 +71,7 @@ def login():
             return redirect("/auth/login")
 
     if not user.check_password(password):
-        flash("Invalid user role.", "danger")
+        flash("Invalid email or password.", "danger")
         return redirect("/auth/login")
 
     session["user_id"] = user.id
@@ -85,7 +85,7 @@ def login():
     if user.role == UserRole.ADMIN:
         return redirect("/admin/dashboard")
 
-    flash("Invalid user role.", "danger")
+    flash("Invalid email or password.", "danger")
     return redirect("/auth/login")
 
 

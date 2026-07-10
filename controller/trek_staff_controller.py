@@ -1,11 +1,12 @@
-from flask import render_template, redirect, session, url_for, flash, request
+from flask import render_template, redirect, session, url_for, flash , request
 from model.model import *
 
 
 def get_current_staff():
     """Returns the staff profile of the logged-in user using session user_id."""
     user_id = session.get("user_id")
-    return StaffModel.query.filter_by(user_id=user_id).first()
+    staff = StaffModel.query.filter_by(user_id=user_id).first()
+    return staff
 
 
 def get_assigned_trek(staff, trek_id):
@@ -209,6 +210,11 @@ def mark_trek_completed(trek_id):
         return redirect(url_for("trekk_staff_routes.manage_trek", trek_id=trek_id))
 
     trek.status = TrekStatus.COMPLETED
+
+    for booking in trek.bookings:
+        if booking.status == BookingStatus.BOOKED:
+            booking.status = BookingStatus.COMPLETED
+
     db.session.commit()
     flash("Trek marked as completed.", "success")
     return redirect(url_for("trekk_staff_routes.manage_trek", trek_id=trek_id))
@@ -263,9 +269,11 @@ def toggle_payment(booking_id):
 
     if booking.payment_status == PaymentStatus.PAID:
         booking.payment_status = PaymentStatus.PENDING
+        booking.amount_paid = 0.0
         flash("Payment status set to Pending.", "info")
     else:
         booking.payment_status = PaymentStatus.PAID
+        booking.amount_paid = booking.trek.price
         flash("Payment status set to Paid.", "success")
 
     db.session.commit()

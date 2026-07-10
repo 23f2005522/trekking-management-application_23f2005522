@@ -1,0 +1,62 @@
+<div class="modal fade" id="bookTrekModal{{ trek.id }}" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Confirm Trek Booking</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+                        {% if trek.image_url %}
+                        <img src="{{ trek.image_url }}" class="img-fluid rounded" alt="{{ trek.name }}">
+                        {% else %}
+                        <div class="bg-secondary-subtle rounded d-flex align-items-center justify-content-center" style="height: 220px;">
+                            <i class="bi bi-image fs-1 text-secondary"></i>
+                        </div>
+                        {% endif %}
+
+                        <p class="text-muted small mt-3 mb-0">
+                            {{ trek.description or "No description available for this trek." }}
+                        </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h4 class="fw-bold">{{ trek.name }}</h4>
+
+                        <ul class="list-unstyled mt-3">
+                            <li class="mb-2"><i class="bi bi-geo-alt me-2 text-success"></i><strong>Location:</strong> {{ trek.location }}</li>
+                            <li class="mb-2"><i class="bi bi-bar-chart me-2 text-success"></i><strong>Difficulty:</strong> {{ trek.difficulty.value|capitalize }}</li>
+                            <li class="mb-2"><i class="bi bi-calendar me-2 text-success"></i><strong>Duration:</strong> {{ trek.duration }} Days</li>
+                            <li class="mb-2"><i class="bi bi-people me-2 text-success"></i><strong>Slots Left:</strong> {{ trek.available_slots }}</li>
+                            <li class="mb-2"><i class="bi bi-currency-rupee me-2 text-success"></i><strong>Price:</strong> <span class="text-success fw-bold">₹{{ trek.price }}</span></li>
+                        </ul>
+
+                        <div class="alert alert-warning small mb-0">
+                            Once booked, your request will appear in <strong>My Bookings</strong>.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+
+                <form method="POST" action="/trekker/booktrek" class="d-inline">
+                    <input type="hidden" name="trek_id" value="{{ trek.id }}">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Confirm Booking
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

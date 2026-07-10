@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-1 p-0">
+            {% include "trekker/sidebar.html" %}
+        </div>
+
+        <div class="col-11">
+            <div class="py-4">
+
+                <h2 class="fw-bold mb-4">My Profile</h2>
+
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+
+                        <form method="POST" action="/trekker/profile">
+
+                            <div class="text-center mb-4">
+                                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3"
+                                     style="width: 80px; height: 80px; font-size: 2rem;">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                                <h4 class="fw-bold mb-1">{{ user.username }}</h4>
+                                <span class="badge bg-success text-uppercase">{{ user.role.value }}</span>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">Username</label>
+                                    <input type="text" name="username" class="form-control" value="{{ user.username }}" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">Email</label>
+                                    <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">Phone Number</label>
+                                    <input type="text" name="phone" class="form-control" value="{{ user.phone }}" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">Role</label>
+                                    <input type="text" class="form-control bg-light" value="{{ user.role.value }}" readonly>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">Account Status</label>
+                                    <input type="text" class="form-control bg-light"
+                                        value="{% if user.is_active %}Active{% else %}Inactive{% endif %}" readonly>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">Blacklisted</label>
+                                    <input type="text" class="form-control bg-light"
+                                        value="{% if user.is_blacklisted %}Yes{% else %}No{% endif %}" readonly>
+                                </div>
+                            </div>
+
+                            <div class="text-end mt-4">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-pencil-square me-1"></i>
+                                    Update Profile
+                                </button>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

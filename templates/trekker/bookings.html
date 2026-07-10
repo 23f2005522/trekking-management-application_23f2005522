@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Bookings
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-1 p-0">
+            {% include "trekker/sidebar.html" %}
+        </div>
+
+        <div class="col-11">
+            <div class="py-4">
+
+                <h2 class="fw-bold mb-4">My Bookings</h2>
+
+                <div class="card shadow-sm">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Trek Name</th>
+                                    <th>Booking Date</th>
+                                    <th>Booking Status</th>
+                                    <th>Payment</th>
+                                    <th>Trek Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if bookings|length == 0 %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-muted">
+                                        No bookings found.
+                                    </td>
+                                </tr>
+                                {% endif %}
+
+                                {% for booking in bookings %}
+                                <tr>
+                                    <td class="fw-semibold">{{ booking.trek.name }}</td>
+                                    <td>{{ booking.booking_date.strftime('%Y-%m-%d') }}</td>
+                                    <td>
+                                        {% if booking.status.value == 'booked' %}
+                                        <span class="badge bg-success text-uppercase">Booked</span>
+                                        {% elif booking.status.value == 'canceled' %}
+                                        <span class="badge bg-danger text-uppercase">Canceled</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary text-uppercase">Completed</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if booking.payment_status.value == 'paid' %}
+                                        <span class="badge bg-success text-uppercase">Paid</span>
+                                        {% elif booking.payment_status.value == 'pending' %}
+                                        <span class="badge bg-warning text-dark text-uppercase">Pending</span>
+                                        {% else %}
+                                        <span class="badge bg-danger text-uppercase">{{ booking.payment_status.value }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success text-uppercase">
+                                            {{ booking.trek.status.value }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if booking.status.value == 'booked' %}
+                                        <a
+                                            href="/trekker/deletebooking/{{ booking.id }}"
+                                            class="btn btn-outline-danger btn-sm"
+                                            onclick="return confirm('Are you sure you want to cancel this booking?')"
+                                        >
+                                            Cancel Booking
+                                        </a>
+                                        {% else %}
+                                        <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -14,7 +14,7 @@
       <div class="py-4">
         <h1 class="fw-bold">Manage Trekkers</h1>
         <p class="text-muted">
-          View all registered trekkers and activate or deactivate their accounts.
+          View all registered trekkers and activate, deactivate, or blacklist their accounts.
         </p>
 
         <div class="card shadow-sm mt-4">
@@ -48,7 +48,9 @@
                   <td>{{ trekker.phone }}</td>
 
                   <td>
-                    {% if trekker.is_active %}
+                    {% if trekker.is_blacklisted %}
+                    <span class="badge bg-danger">Blacklisted</span>
+                    {% elif trekker.is_active %}
                     <span class="badge bg-success">Active</span>
                     {% else %}
                     <span class="badge bg-secondary">Inactive</span>
@@ -56,16 +58,46 @@
                   </td>
 
                   <td>
-                    {% if trekker.is_active %}
+                    {% if trekker.is_blacklisted %}
+                    <div class="small text-muted mb-2">
+                      {{ trekker.blacklisted_reason or "No reason provided" }}
+                    </div>
+                    <form
+                      action="/admin/manage_trekkers/deblacklist/{{ trekker.id }}"
+                      method="POST"
+                      class="d-inline">
+                      <button type="submit" class="btn btn-success btn-sm">
+                        Remove Blacklist
+                      </button>
+                    </form>
+
+                    {% elif trekker.is_active %}
                     <form
                       action="/admin/manage_trekkers/deactivate/{{ trekker.id }}"
                       method="POST"
-                      class="d-inline"
+                      class="d-inline me-2"
                       onsubmit="return confirm('Deactivate this trekker account?');">
                       <button type="submit" class="btn btn-warning btn-sm">
                         Deactivate
                       </button>
                     </form>
+
+                    <form
+                      action="/admin/manage_trekkers/blacklist/{{ trekker.id }}"
+                      method="POST"
+                      class="d-inline-flex gap-2 align-items-center">
+                      <input
+                        type="text"
+                        name="blacklisted_reason"
+                        class="form-control form-control-sm"
+                        placeholder="Reason (optional)"
+                        style="width: 140px;"
+                      >
+                      <button type="submit" class="btn btn-danger btn-sm text-nowrap">
+                        Blacklist
+                      </button>
+                    </form>
+
                     {% else %}
                     <form
                       action="/admin/manage_trekkers/reactivate/{{ trekker.id }}"
@@ -83,6 +115,7 @@
             </table>
           </div>
         </div>
+
       </div>
     </div>
   </div>

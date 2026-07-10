@@ -245,14 +245,28 @@
                       </td>
 
                       <td>
-                        <form
-                          action="/admin/manage_staff/deblacklist_staff/{{ staff.id }}"
-                          method="POST"
-                        >
-                          <button type="submit" class="btn btn-success btn-sm">
-                            Approve Again
-                          </button>
-                        </form>
+                        <div class="d-flex gap-2 flex-wrap">
+                          <form
+                            action="/admin/manage_staff/deblacklist_staff/{{ staff.id }}"
+                            method="POST"
+                            class="d-inline"
+                          >
+                            <button type="submit" class="btn btn-success btn-sm">
+                              Approve Again
+                            </button>
+                          </form>
+
+                          <form
+                            action="/admin/manage_staff/delete_staff/{{ staff.id }}"
+                            method="POST"
+                            class="d-inline"
+                            onsubmit="return confirm('Permanently delete this trek staff? This action cannot be undone.');"
+                          >
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                              Delete Trek Staff Permanently
+                            </button>
+                          </form>
+                        </div>
                       </td>
                     </tr>
                     {% endfor %}

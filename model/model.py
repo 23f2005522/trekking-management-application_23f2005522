@@ -33,7 +33,7 @@ class TrekStatus(str, Enum):
 # BookingStatus
 class BookingStatus(str, Enum):
     BOOKED = "booked"
-    COMPLETED = "comepleted"
+    COMPLETED = "completed"
     CANCELED = "canceled"
 
 
@@ -102,25 +102,7 @@ class UserModel(BaseModel):  ## trekkers [by default] , staff [call StaffModel] 
         uselist=False,
         cascade="all, delete-orphan",
     )
-
-    reviews = db.relationship(
-        "TrekReviewModel",
-        backref=db.backref("user", lazy=True),
-        foreign_keys="TrekReviewModel.user_id",
-        lazy=True,
-        cascade="all, delete-orphan",
-    )
-    ###
-
-    # methods to check user roles
-    def is_admin(self):
-        return self.role == UserRole.ADMIN
-
-    def is_staff(self):
-        return self.role == UserRole.STAFF
-
-    def is_trekker(self):
-        return self.role == UserRole.TREKKER
+    
 
     # methods to set and check password
     def set_password(self, password):
@@ -184,9 +166,6 @@ class TrekModel(BaseModel):
     bookings = db.relationship(
         "BookingModel", backref=db.backref("trek", lazy=True), lazy=True, cascade="all, delete-orphan"
     )  # one to many relationship with BookingModel
-    reviews = db.relationship(
-        "TrekReviewModel", backref=db.backref("trek", lazy=True), lazy=True, cascade="all, delete-orphan"
-    )  # one to many relationship with ReviewModel
 
     __table_args__ = (
         db.CheckConstraint(
@@ -195,13 +174,6 @@ class TrekModel(BaseModel):
         db.CheckConstraint("starting_at < ending_at", name="ending before start constraint"),
         db.CheckConstraint("price >= 0", name="zero_price_constraint"),
     )
-
-    # computed property to calculate available slots
-    @property  # @property decorator is used to define a method as a property, so that it can be accessed like an attribute.
-    def calculate_available_slots(self):
-        already_blooked = [b for b in self.bookings if b.status == BookingStatus.BOOKED]
-        booked_slots = len(already_blooked)
-        return self.total_slots - booked_slots
 
 
 # Booking Model
@@ -221,7 +193,6 @@ class BookingModel(BaseModel):
 
     amount_paid = db.Column(db.Numeric(10, 2), nullable=False, default=0.00)
     booking_cancel_date = db.Column(db.DateTime, nullable=True)
-    booking_cancel_reason = db.Column(db.String(500), nullable=True)
 
     # relationships (automatically generated via backrefs on UserModel and TrekModel)
 
@@ -231,16 +202,3 @@ class BookingModel(BaseModel):
             "user_id", "trek_id", name="unique_user_trek_booking"
         ),  ## only one user can book a trek at a time
     )
-
-
-# Review Model
-class TrekReviewModel(BaseModel):
-
-    __tablename__ = "reviews"
-
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    trek_id = db.Column(db.Integer, db.ForeignKey("treks.id"), nullable=False)
-    rating = db.Column(db.Integer, nullable=False, default=5)
-    comment = db.Column(db.String(500), nullable=True)
-
-    # relationships (automatically generated via backrefs on UserModel and TrekModel)
