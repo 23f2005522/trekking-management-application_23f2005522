@@ -171,12 +171,19 @@ def manage_staff():
         if staff.staff_profile.Profile_status == StaffStatus.BLACKLISTED
     ]
 
+    rejected_staff_members = [
+        staff
+        for staff in staff_members
+        if staff.staff_profile.Profile_status == StaffStatus.REJECTED
+    ]
+
     return render_template(
         "admin/manage_staff.html",
         staff_members=staff_members,
         pending_staff_members=pending_staff_members,
         approved_staff_members=approved_staff_members,
         blacklisted_staff_members=blacklisted_staff_members,
+        rejected_staff_members=rejected_staff_members,
     )
 
 
@@ -324,8 +331,11 @@ def delete_staff_permanently(user_id):
         flash("Staff profile not found.", "danger")
         return redirect("/admin/manage_staff")
 
-    if staff_user.staff_profile.Profile_status != StaffStatus.BLACKLISTED:
-        flash("Only blacklisted staff can be permanently deleted.", "danger")
+    if staff_user.staff_profile.Profile_status not in (
+        StaffStatus.BLACKLISTED,
+        StaffStatus.REJECTED,
+    ):
+        flash("Only blacklisted or rejected staff can be permanently deleted.", "danger")
         return redirect("/admin/manage_staff")
 
     try:

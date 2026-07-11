@@ -104,6 +104,8 @@ def manage_trek(trek_id):
         .order_by(BookingModel.booking_date.desc())
         .all()
     )
+    preview_limit = 5
+    preview_bookings = bookings[:preview_limit]
 
     # total booked slots
     booked_count = len([b for b in trek.bookings if b.status == BookingStatus.BOOKED])
@@ -159,7 +161,9 @@ def manage_trek(trek_id):
         "trekStaff/manage_trek.html",
         staff=staff,
         trek=trek,
-        bookings=bookings,
+        preview_bookings=preview_bookings,
+        total_participants=len(bookings),
+        preview_limit=preview_limit,
     )
 
 

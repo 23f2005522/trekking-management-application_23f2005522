@@ -64,6 +64,18 @@
           <li class="nav-item" role="presentation">
             <button
               class="nav-link"
+              id="rejected-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#rejected"
+              type="button"
+            >
+              Rejected ({{ rejected_staff_members|length }})
+            </button>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
               id="blacklisted-tab"
               data-bs-toggle="tab"
               data-bs-target="#blacklisted"
@@ -198,6 +210,67 @@
                           />
                           <button type="submit" class="btn btn-danger btn-sm text-nowrap">
                             Blacklist
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rejected -->
+
+          <div class="tab-pane fade" id="rejected">
+            <div class="alert alert-info py-2 mb-3" role="alert">
+              Rejected staff cannot be re-approved. To allow them back into the
+              system, permanently delete this record and create a new staff
+              account again.
+            </div>
+
+            <div class="card shadow-sm">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Staff ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Contact</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {% if rejected_staff_members|length == 0 %}
+                    <tr>
+                      <td colspan="6" class="text-center">
+                        No rejected staff members found.
+                      </td>
+                    </tr>
+                    {% endif %} {% for staff in rejected_staff_members %}
+                    <tr>
+                      <td>{{ staff.staff_profile.id }}</td>
+                      <td>{{ staff.username }}</td>
+                      <td>{{ staff.email }}</td>
+                      <td>{{ staff.staff_profile.contact_number }}</td>
+
+                      <td>
+                        <span class="badge bg-secondary"> Rejected </span>
+                      </td>
+
+                      <td>
+                        <form
+                          action="/admin/manage_staff/delete_staff/{{ staff.id }}"
+                          method="POST"
+                          class="d-inline"
+                          onsubmit="return confirm('Permanently delete this rejected staff member? They must be created again as a new account.');"
+                        >
+                          <button type="submit" class="btn btn-outline-danger btn-sm">
+                            Delete Permanently
                           </button>
                         </form>
                       </td>

@@ -124,10 +124,14 @@
                     </div>
                 </div>
 
-                <!-- Participants -->
+                <!-- Participants preview (payment changes on Participants page) -->
                 <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-white fw-bold">
-                        Participants ({{ trek.booked_participants }})
+                    <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <span>Participants ({{ total_participants }})</span>
+                        <a href="/trekstaff/participants" class="btn btn-sm btn-outline-success">
+                            <i class="bi bi-people me-1"></i>
+                            View All &amp; Manage Payments
+                        </a>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
@@ -138,17 +142,16 @@
                                     <th>Booking Date</th>
                                     <th>Booking Status</th>
                                     <th>Payment Status</th>
-                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% if bookings|length == 0 %}
+                                {% if preview_bookings|length == 0 %}
                                 <tr>
-                                    <td colspan="6" class="text-center py-4">No participants yet.</td>
+                                    <td colspan="5" class="text-center py-4">No participants yet.</td>
                                 </tr>
                                 {% endif %}
 
-                                {% for booking in bookings %}
+                                {% for booking in preview_bookings %}
                                 <tr>
                                     <td class="fw-semibold">{{ booking.user.username }}</td>
                                     <td>{{ booking.user.email }}</td>
@@ -164,24 +167,17 @@
                                             booking.payment_status.value }}</span>
                                         {% endif %}
                                     </td>
-                                    <td>
-                                        <form method="POST" action="/trekstaff/toggle-payment/{{ booking.id }}"
-                                            class="d-inline">
-                                            <input type="hidden" name="next" value="manage_trek">
-                                            <button type="submit" class="btn btn-sm btn-outline-success">
-                                                {% if booking.payment_status.value == 'paid' %}
-                                                Mark Pending
-                                                {% else %}
-                                                Mark Paid
-                                                {% endif %}
-                                            </button>
-                                        </form>
-                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
+                    {% if total_participants > preview_limit %}
+                    <div class="card-footer bg-white text-muted small text-center">
+                        Showing {{ preview_limit }} of {{ total_participants }} participants.
+                        Use <strong>View All &amp; Manage Payments</strong> to see everyone and update payment status.
+                    </div>
+                    {% endif %}
                 </div>
 
                 <!-- Trek Progress Actions -->
